@@ -69,7 +69,7 @@ server <- (function(input, output, session) {
   
   selected <- reactive({
     subset(pgdata2,
-           gap < input$smokerange[2] & gap >= input$smokerange[1])
+           gap < input$paygaprange[2] & gap >= input$paygaprange[1])
   })
   
   # Put the default map co-ordinates and zoom level into variables
@@ -81,7 +81,8 @@ server <- (function(input, output, session) {
   output$map <- renderLeaflet({
     
     leaflet() %>% 
-      # addProviderTiles("CartoDB.Positron") %>% 
+      #maybe set a more colourful map background..?
+      addProviderTiles("CartoDB.Positron") %>% 
       setView(lat = lat, lng = lng, zoom = zoom) %>%
       addPolygons(data = parlconst, opacity=1, color = "black", weight = 1, fillOpacity=0.5, layerId = parlconst$CODE)
     
@@ -105,7 +106,7 @@ server <- (function(input, output, session) {
     
     #draw the map with stuff on
     leafletProxy("map", data = parlconst) %>%
-      # addProviderTiles("CartoDB.Positron") %>% 
+      addProviderTiles("CartoDB.Positron") %>% 
       clearShapes() %>% 
       clearControls() %>% 
       addPolygons(data = parlconst, fillColor = ~qpal(gap), fillOpacity = 0.7, 
@@ -135,7 +136,6 @@ server <- (function(input, output, session) {
     })
     
     pgdist2Const <- pgdist2[ which(pgdist2$areacode1 == available[1,2]),]
-    
     output$plot1 <- renderPlot({
       ggplot() + geom_bar(data = pgdist2Const, aes(x=stat,y=All), stat="identity") + coord_flip() + geom_point(data = pgdist2Nat, aes(x=stat,y=All), stat="identity")
     })
